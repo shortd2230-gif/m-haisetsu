@@ -1127,10 +1127,9 @@
           name, time, stateText, note: ''
         });
         const img = new Image();
-        img.src = GAS_URL + '?' + params.toString();
-        console.log('GAS送信:', name, time, stateText);
-      } catch(e) {
-        console.log('GAS送信エラー:', e);
+const img = new Image();
+img.src = GAS_URL + '?' + params.toString();
+console.log('GAS送信:', name, time, stateText);
       }
     }
 
