@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>排泄チェックシート</title>
+
+  <!-- ★ ホーム画面追加・アプリ表示対応 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="排泄チェック">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="排泄チェック">
+  <style>
+    :root {
+      --bg: #f5efe4;
+      --panel: rgba(255, 252, 246, 0.96);
+      --panel-soft: #f4ebdc;
+      --line: #d6c5aa;
+      --text: #2e2418;
+      --muted: #6d614f;
+      --brand: #0f766e;
+      --brand-strong: #0b5d57;
+      --accent-0: #f4efe6;
+      --accent-1: #cfe7ff;
+      --accent-2: #ffd8a4;
+      --accent-3: #d9ccff;
+      --accent-4: #bbf7d0;
+      --accent-5: #fce7f3;
+      --danger: #a13d2f;
+      --shadow: 0 22px 42px rgba(75, 54, 25, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Yu Gothic UI", "Hiragino Sans", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.12), transparent 24%),
+        radial-gradient(circle at top right, rgba(217, 119, 6, 0.14), transparent 26%),
+        linear-gradient(180deg, #f8f4ec 0%, #efe4d3 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      background: linear-gradient(140deg, rgba(15, 118, 110, 0.96), rgba(11, 93, 87, 0.92));
+      color: #fff;
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .hero-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1.08;
+      letter-spacing: 0.04em;
+    }
+
+    .hero p {
+      margin: 10px 0 0;
+      max-width: 54rem;
+      color: rgba(255, 255, 255, 0.86);
+      line-height: 1.7;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #bce8d4;
+      box-shadow: 0 0 0 6px rgba(188, 232, 212, 0.15);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 390px minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(214, 197, 170, 0.7);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .panel-head {
+      padding: 20px 22px 10px;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .panel-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .panel-body {
+      padding: 20px 22px 22px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .preset-row,
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: var(--brand-strong); }
+
+    .btn-subtle {
+      background: #ece2d2;
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-teams {
+      background: #5558af;
+      color: #fff;
+    }
+    .btn-teams:hover { background: #444899; }
+
+    .legend-list,
+    .summary-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .legend-item,
+    .summary-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 14px;
+      background: var(--panel-soft);
+      border: 1px solid rgba(214, 197, 170, 0.65);
+      border-radius: 16px;
+    }
+
+    .badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: #000;
+    }
+
+    .state-0 { background: var(--accent-0); color: var(--muted); }
+    .state-1 { background: var(--accent-1); }
+    .state-2 { background: var(--accent-2); }
+    .state-3 { background: var(--accent-3); }
+
+    .subnote {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .meta-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 14px 22px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+
+    /* ── 常時表示凡例バー ── */
+    .legend-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #fffbf5;
+      border-bottom: 1.5px solid #e8d9c4;
+      padding: 6px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.07);
+    }
+    .legend-bar-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: #5a4a38;
+      white-space: nowrap;
+    }
+    .legend-bar-badge {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .lb1{background:#cfe7ff;color:#1d4ed8}
+    .lb2{background:#ffd8a4;color:#92400e}
+    .lb3{background:#d9ccff;color:#5b21b6}
+    .lb4{background:#d9ccff;color:#5b21b6}
+    .lb5{background:#bbf7d0;color:#065f46}
+    .lb6{background:#a7f3d0;color:#065f46}
+    .lb7{background:#fce7f3;color:#9d174d}
+
+    .table-shell {
+      padding: 20px 22px 22px;
+      overflow-x: auto;
+      overflow-y: visible;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1040px;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    thead th {
+      position: sticky;
+      top: 38px;
+      z-index: 2;
+      background: #f0e4d1;
+      color: var(--text);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+    }
+
+    th, td {
+      border-right: 1px solid #ddcfbb;
+      border-bottom: 1px solid #ddcfbb;
+      padding: 0;
+      text-align: center;
+    }
+
+    th:first-child,
+    td:first-child {
+      border-left: 1px solid #ddcfbb;
+    }
+
+    thead tr:first-child th {
+      border-top: 1px solid #ddcfbb;
+    }
+
+    th {
+      padding: 14px 10px;
+      font-weight: 800;
+    }
+
+    .col-name { width: 180px; }
+    /* ② 利用者名列を左固定 */
+    th.col-name,
+    td.col-name {
+      position: sticky !important;
+      left: 0 !important;
+      z-index: 3;
+      background: #f8f4ef;
+      box-shadow: 2px 0 5px rgba(0,0,0,.10);
+    }
+    thead th.col-name {
+      z-index: 5;
+      background: #f0e4d1;
+      top: 38px;
+    }
+    .col-time { width: 98px; }
+    .col-note { width: 220px; }
+
+    .name-input,
+    .note-input {
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      min-height: 60px;
+      height: 100%;
+    }
+
+    .state-btn {
+      width: 100%;
+      min-height: 60px;
+      border-radius: 0;
+      padding: 0;
+      font-size: 24px;
+      background: var(--accent-0);
+      color: transparent;
+    }
+
+    .state-btn.state-1 { background: var(--accent-1); color: #000; }
+    .state-btn.state-2 { background: var(--accent-2); color: #000; }
+    .state-btn.state-3 { background: var(--accent-3); color: #000; }
+    .state-btn.state-4 { background: var(--accent-4); color: #000; }
+    .state-btn.state-5 { background: var(--accent-5); color: #000; }
+
+    .summary-item strong {
+      display: block;
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .summary-item span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 1120px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell { padding: 14px; }
+      .hero { padding: 22px; border-radius: 22px; }
+      .panel { border-radius: 20px; }
+      .two-cols { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .shell { max-width: none; padding: 0; }
+      .hero,
+      .panel:first-child,
+      .actions,
+      .preset-row,
+      .meta-strip { display: none !important; }
+      .layout { display: block; }
+      .panel {
+        box-shadow: none;
+        border: none;
+        background: #fff;
+      }
+  
+    /* ── 常時表示凡例バー ── */
+    .legend-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #fffbf5;
+      border-bottom: 1.5px solid #e8d9c4;
+      padding: 6px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.07);
+    }
+    .legend-bar-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: #5a4a38;
+      white-space: nowrap;
+    }
+    .legend-bar-badge {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .lb1{background:#cfe7ff;color:#1d4ed8}
+    .lb2{background:#ffd8a4;color:#92400e}
+    .lb3{background:#d9ccff;color:#5b21b6}
+    .lb4{background:#d9ccff;color:#5b21b6}
+    .lb5{background:#bbf7d0;color:#065f46}
+    .lb6{background:#a7f3d0;color:#065f46}
+    .lb7{background:#fce7f3;color:#9d174d}
+
+    .table-shell {
+        padding: 0;
+        overflow: visible;
+      }
+      thead th {
+        position: static;
+        background: #ececec !important;
+      }
+      .state-btn {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .print-header {
+        display: block !important;
+        padding: 12px 16px 8px;
+        border-bottom: 2px solid #ccc;
+        margin-bottom: 8px;
+      }
+      .print-header h2 {
+        margin: 0 0 4px;
+        font-size: 18px;
+      }
+      .print-header p {
+        margin: 0;
+        font-size: 12px;
+        color: #555;
+      }
+    }
+
+  /* ===== 排泄選択モーダル ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    width: 280px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    text-align: center;
+  }
+  .modal-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: #0f766e;
+    margin-bottom: 16px;
+  }
+  .modal-btns {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .modal-btn {
+    flex: 1;
+    padding: 12px 4px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .modal-btn-1 { background: #cfe7ff; color: #1d4ed8; }
+  .modal-btn-2 { background: #ffd8a4; color: #92400e; }
+  .modal-btn-3 { background: #d9ccff; color: #5b21b6; }
+  /* ★ 追加：紙おむつ・洗体更衣ボタン */
+  .modal-btns-sub {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .modal-btn-4 { background: #bbf7d0; color: #065f46; }
+  .modal-btn-5 { background: #fce7f3; color: #9d174d; }
+  .modal-btn-6 { background: #e0f2fe; color: #0369a1; }
+  .modal-btn-7 { background: #fef9c3; color: #92400e; }
+  /* ★ 追加：消去ボタン */
+  .modal-btn-clear {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #fee2e2;
+    color: #991b1b;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 6px;
+  }
+  .modal-btn-clear:hover { background: #fecaca; }
+  .modal-btn-cancel {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    color: #666;
+  }
+  </style>
+</head>
+<body>
+  <!-- 排泄選択モーダル -->
+  <div class="modal-overlay" id="stateModal">
+    <div class="modal-box">
+      <div class="modal-title" id="modalTitle">選択してください</div>
+      <div class="modal-btns">
+        <button class="modal-btn modal-btn-1" id="modalBtn1">排尿</button>
+        <button class="modal-btn modal-btn-2" id="modalBtn2">排便</button>
+      </div>
+      <div class="modal-btns-sub">
+        <button class="modal-btn modal-btn-3" id="modalBtn3">紙おむつ排尿交換</button>
+        <button class="modal-btn modal-btn-4" id="modalBtn4">紙おむつ排便交換</button>
+      </div>
+      <div class="modal-btns-sub">
+        <button class="modal-btn modal-btn-5" id="modalBtn5">洗体・更衣</button>
+        <button class="modal-btn modal-btn-6" id="modalBtn6">洗体のみ</button>
+        <button class="modal-btn modal-btn-7" id="modalBtn7">更衣のみ</button>
+      </div>
+      <!-- ★ 追加：消去ボタン -->
+      <button class="modal-btn-clear" id="modalBtnClear">🗑️ 消去</button>
+      <button class="modal-btn-cancel" id="modalCancel">キャンセル</button>
+    </div>
+  </div>
+
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-row">
+        <div>
+          <h1>排泄チェックシート</h1>
+          <p>まずは現場の書き方に合わせて項目を固めるための試作版です。勤務帯、時間帯、凡例、備考欄名を画面上で調整しながら、運用の形を確認できます。</p>
+        </div>
+        <div class="status">
+          <span class="status-dot"></span>
+          <span id="save-status">リーダーの設定を反映しました (10:37)</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="panel">
+        <div class="panel-head">
+          <h2>現場向け設定</h2>
+          <p>まずは今の運用に寄せて文言を調整し、あとから共有機能をのせやすい形にしています。</p>
+        </div>
+        <div class="panel-body">
+          <div class="stack">
+            <div class="two-cols">
+              <label>
+                記録日
+                <input id="record-date" type="date">
+              </label>
+              <label>
+                勤務帯
+                <select id="shift-name">
+                  <option value="日中">日中</option>
+                  <option value="早番">早番</option>
+                  <option value="遅番">遅番</option>
+                  <option value="夜勤">夜勤</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="two-cols">
+              <label>
+                記録者
+                <input id="staff-name" type="text" placeholder="例: 田中">
+              </label>
+              <label>
+                部署・ユニット
+                <input id="unit-name" type="text" placeholder="例: 2階ユニット">
+              </label>
+            </div>
+
+            <div class="two-cols">
+              <label>
+                シート名
+                <input id="sheet-name" type="text" placeholder="例: 排泄チェックシート">
+              </label>
+              <label>
+                行数
+                <select id="row-count">
+                  <option value="6">6名</option>
+                  <option value="10">10名</option>
+                  <option value="15">15名</option>
+                  <option value="20">20名</option>
+                  <option value="25">25名</option>
+                  <option value="30">30名</option>
+                  <option value="35">35名</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="two-cols">
+              <label>
+                利用者列名
+                <input id="resident-label" type="text" placeholder="例: 利用者名">
+              </label>
+              <label>
+                備考列名
+                <input id="note-label" type="text" placeholder="例: 備考">
+              </label>
+            </div>
+
+            <label>
+              時間帯
+              <input id="time-slots" type="text" placeholder="例: 9:00,10:00,11:00,12:00,13:00,14:00,15:00">
+            </label>
+
+            <div class="preset-row">
+              <button class="btn-subtle" id="preset-day" type="button">日中テンプレート</button>
+              <button class="btn-subtle" id="preset-night" type="button">夜間テンプレート</button>
+              <button class="btn-subtle" id="preset-short" type="button">巡回テンプレート</button>
+            </div>
+
+            <label>
+              引き継ぎメモ
+              <textarea id="handover-note" placeholder="申し送りや注意点を入力"></textarea>
+            </label>
+
+            <div>
+              <label style="margin-bottom:8px;">凡例</label>
+              <div class="legend-list">
+                <div class="legend-item">
+                  <div class="badge state-1">1</div>
+                  <input id="legend-1" type="text" placeholder="例: 排尿">
+                </div>
+                <div class="legend-item">
+                  <div class="badge state-2">2</div>
+                  <input id="legend-2" type="text" placeholder="例: 排便">
+                </div>
+                <div class="legend-item">
+                  <div class="badge state-3">3</div>
+                  <input id="legend-3" type="text" placeholder="例: 紙おむつ排尿交換">
+                </div>
+                <div class="legend-item">
+                  <div class="badge state-4">4</div>
+                  <input id="legend-4" type="text" placeholder="例: 紙おむつ排便交換">
+                </div>
+                <div class="legend-item">
+                  <div class="badge state-5">5</div>
+                  <input id="legend-5" type="text" placeholder="例: 洗体・更衣">
+                </div>
+                <div class="legend-item">
+                  <div class="badge state-6">6</div>
+                  <input id="legend-6" type="text" placeholder="例: 洗体のみ">
+                </div>
+                <div class="legend-item">
+                  <div class="badge state-7">7</div>
+                  <input id="legend-7" type="text" placeholder="例: 更衣のみ">
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label style="margin-bottom:8px;">当日の集計</label>
+              <div class="summary-list">
+                <div class="summary-item">
+                  <div class="badge state-1">1</div>
+                  <div>
+                    <strong id="count-state-1">0件</strong>
+                    <span id="summary-label-1">排尿</span>
+                  </div>
+                </div>
+                <div class="summary-item">
+                  <div class="badge state-2">2</div>
+                  <div>
+                    <strong id="count-state-2">0件</strong>
+                    <span id="summary-label-2">排便</span>
+                  </div>
+                </div>
+                <div class="summary-item">
+                  <div class="badge state-3">3</div>
+                  <div>
+                    <strong id="count-state-3">0件</strong>
+                    <span id="summary-label-3">紙おむつ排尿交換</span>
+                  </div>
+                </div>
+                <div class="summary-item">
+                  <div class="badge state-4">4</div>
+                  <div>
+                    <strong id="count-state-4">0件</strong>
+                    <span id="summary-label-4">紙おむつ排便交換</span>
+                  </div>
+                </div>
+                <div class="summary-item">
+                  <div class="badge state-5">5</div>
+                  <div>
+                    <strong id="count-state-5">0件</strong>
+                    <span id="summary-label-5">洗体・更衣</span>
+                  </div>
+                </div>
+                <div class="summary-item">
+                  <div class="badge state-6">6</div>
+                  <div>
+                    <strong id="count-state-6">0件</strong>
+                    <span id="summary-label-6">洗体のみ</span>
+                  </div>
+                </div>
+                <div class="summary-item">
+                  <div class="badge state-7">7</div>
+                  <div>
+                    <strong id="count-state-7">0件</strong>
+                    <span id="summary-label-7">更衣のみ</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn-primary" id="print-button" type="button">🖨️ 印刷</button>
+              <button class="btn-primary" id="pdf-button" type="button">📄 PDFで保存</button>
+              <button class="btn-teams" id="teams-button" type="button">💬 Teamsにコピー</button>
+              <button class="btn-subtle" id="export-button" type="button">JSONを書き出し</button>
+              <button class="btn-subtle" id="import-button" type="button">JSONを読み込む</button>
+              <button class="btn-danger" id="reset-button" type="button">この日の記録を初期化</button>
+            </div>
+
+            <div id="teams-toast" style="display:none; margin-top:10px; padding:10px 14px; background:#e8f5e9; border:1px solid #a5d6a7; border-radius:12px; font-size:13px; color:#2e7d32;">
+              ✅ クリップボードにコピーしました！Teamsを開いて貼り付けてください（Ctrl+V / ⌘+V）
+            </div>
+
+            <div class="subnote">
+              今回は運用調整に集中するため、保存先はブラウザ内にしています。項目が固まったら、この保存部分を Firebase や社内サーバーへ差し替える流れが一番きれいです。
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <div class="print-header" style="display:none;">
+          <h2 id="print-sheet-name">排泄チェックシート</h2>
+          <p id="print-sheet-meta">記録日: 2026-05-03 / 部署: むつみの家 / 記録者: 藤沢 / 勤務帯: 日中</p>
+        </div>
+        <div class="panel-head">
+          <h2 id="sheet-heading">排泄チェックシート</h2>
+          <p>セルを押すたびにモーダルが開きます。排泄種別を選択するか「消去」で記録を削除できます。</p>
+        </div>
+        <div class="meta-strip">
+          <div id="sheet-title">記録日: 2026-05-03</div>
+          <div id="sheet-subtitle">部署: むつみの家 / 記録者: 藤沢 / 勤務帯: 日中</div>
+        </div>
+        <div class="legend-bar" id="legendBar">
+          <div class="legend-bar-item"><div class="legend-bar-badge lb1">1</div><span id="lb-text-1">排尿</span></div>
+          <div class="legend-bar-item"><div class="legend-bar-badge lb2">2</div><span id="lb-text-2">排便</span></div>
+          <div class="legend-bar-item"><div class="legend-bar-badge lb3">3</div><span id="lb-text-3">紙おむつ排尿交換</span></div>
+          <div class="legend-bar-item"><div class="legend-bar-badge lb4">4</div><span id="lb-text-4">紙おむつ排便交換</span></div>
+          <div class="legend-bar-item"><div class="legend-bar-badge lb5">5</div><span id="lb-text-5">洗体・更衣</span></div>
+          <div class="legend-bar-item"><div class="legend-bar-badge lb6">6</div><span id="lb-text-6">洗体のみ</span></div>
+          <div class="legend-bar-item"><div class="legend-bar-badge lb7">7</div><span id="lb-text-7">更衣のみ</span></div>
+        </div>
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr id="table-head-row"></tr>
+            </thead>
+            <tbody id="sheet-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <input id="import-file" type="file" accept="application/json" hidden="">
+
+  <script>
+    // ★ キャッシュ強制リロード：更新時はここを v4→v5 と上げる
+    const APP_VERSION = "v13";
+    if (localStorage.getItem("appVersion") !== APP_VERSION) {
+      localStorage.setItem("appVersion", APP_VERSION);
+      location.reload(true);
+    }
+
+    const STORAGE_PREFIX = "bowel-checksheet";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzInfQnwqHyEMSR0XdEUd71YjLF_KLzGzYW50WdGpqc-dJs-Xbu49R0evWF10di10U8/exec";
+    const DEFAULT_TIME_SLOTS = ["9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00"];
+    const DEFAULT_ROWS = 6;
+
+    const defaultMeta = (dateText) => ({
+      recordDate: dateText,
+      shiftName: "日中",
+      staffName: "",
+      unitName: "",
+      sheetName: "排泄チェックシート",
+      residentLabel: "利用者名",
+      noteLabel: "備考",
+      handoverNote: "",
+      legend1: "排尿",
+      legend2: "排便",
+      legend3: "紙おむつ排尿交換",
+      legend4: "紙おむつ排便交換",
+      legend5: "洗体・更衣",
+      legend6: "洗体のみ",
+      legend7: "更衣のみ",
+      rowCount: DEFAULT_ROWS,
+      timeSlots: [...DEFAULT_TIME_SLOTS]
+    });
+
+    const state = {
+      meta: defaultMeta(""),
+      rows: []
+    };
+
+    const els = {
+      recordDate: document.getElementById("record-date"),
+      shiftName: document.getElementById("shift-name"),
+      staffName: document.getElementById("staff-name"),
+      unitName: document.getElementById("unit-name"),
+      sheetName: document.getElementById("sheet-name"),
+      residentLabel: document.getElementById("resident-label"),
+      noteLabel: document.getElementById("note-label"),
+      timeSlots: document.getElementById("time-slots"),
+      handoverNote: document.getElementById("handover-note"),
+      legend1: document.getElementById("legend-1"),
+      legend2: document.getElementById("legend-2"),
+      legend3: document.getElementById("legend-3"),
+      legend4: document.getElementById("legend-4"),
+      legend5: document.getElementById("legend-5"),
+      legend6: document.getElementById("legend-6"),
+      legend7: document.getElementById("legend-7"),
+      rowCount: document.getElementById("row-count"),
+      sheetHeading: document.getElementById("sheet-heading"),
+      sheetBody: document.getElementById("sheet-body"),
+      tableHeadRow: document.getElementById("table-head-row"),
+      saveStatus: document.getElementById("save-status"),
+      sheetTitle: document.getElementById("sheet-title"),
+      sheetSubtitle: document.getElementById("sheet-subtitle"),
+      countState1: document.getElementById("count-state-1"),
+      countState2: document.getElementById("count-state-2"),
+      countState3: document.getElementById("count-state-3"),
+      countState4: document.getElementById("count-state-4"),
+      countState5: document.getElementById("count-state-5"),
+      countState6: document.getElementById("count-state-6"),
+      countState7: document.getElementById("count-state-7"),
+      summaryLabel1: document.getElementById("summary-label-1"),
+      summaryLabel2: document.getElementById("summary-label-2"),
+      summaryLabel3: document.getElementById("summary-label-3"),
+      summaryLabel4: document.getElementById("summary-label-4"),
+      summaryLabel5: document.getElementById("summary-label-5"),
+      summaryLabel6: document.getElementById("summary-label-6"),
+      summaryLabel7: document.getElementById("summary-label-7"),
+      presetDay: document.getElementById("preset-day"),
+      presetNight: document.getElementById("preset-night"),
+      presetShort: document.getElementById("preset-short"),
+      printButton: document.getElementById("print-button"),
+      pdfButton: document.getElementById("pdf-button"),
+      teamsButton: document.getElementById("teams-button"),
+      teamsToast: document.getElementById("teams-toast"),
+      exportButton: document.getElementById("export-button"),
+      importButton: document.getElementById("import-button"),
+      importFile: document.getElementById("import-file"),
+      resetButton: document.getElementById("reset-button")
+    };
+
+    function todayString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function recordStorageKey(dateText) {
+      return `${STORAGE_PREFIX}:${dateText}`;
+    }
+
+    function normalizeTimeSlots(value) {
+      const tokens = Array.isArray(value)
+        ? value
+        : String(value || "")
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean);
+      return tokens.length > 0 ? tokens : [...DEFAULT_TIME_SLOTS];
+    }
+
+    function blankRow(index) {
+      return {
+        name: "",
+        note: "",
+        cells: state.meta.timeSlots.map(() => 0),
+        order: index + 1
+      };
+    }
+
+    function ensureRows(rowCount) {
+      const count = Number(rowCount) || DEFAULT_ROWS;
+      while (state.rows.length < count) {
+        state.rows.push(blankRow(state.rows.length));
+      }
+      state.rows = state.rows.slice(0, count);
+      state.meta.rowCount = count;
+    }
+
+    function ensureCellsForTimes() {
+      const slotCount = state.meta.timeSlots.length;
+      state.rows = state.rows.map((row, index) => {
+        const cells = Array.isArray(row.cells) ? [...row.cells] : [];
+        while (cells.length < slotCount) cells.push(0);
+        return {
+          name: row?.name || "",
+          note: row?.note || "",
+          order: index + 1,
+          cells: cells.slice(0, slotCount).map((value) => Number(value) || 0)
+        };
+      });
+    }
+
+    function updateSaveStatus(message) {
+      els.saveStatus.textContent = message;
+    }
+
+    function saveState() {
+      if (!state.meta.recordDate) return;
+      localStorage.setItem(recordStorageKey(state.meta.recordDate), JSON.stringify(state));
+      updateSaveStatus(`自動保存済み: ${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}`);
+    }
+
+    function loadStateByDate(dateText) {
+      const raw = localStorage.getItem(recordStorageKey(dateText));
+      if (!raw) {
+        state.meta = defaultMeta(dateText);
+        state.rows = [];
+        ensureRows(DEFAULT_ROWS);
+        ensureCellsForTimes();
+        renderAll();
+        saveState();
+        return;
+      }
+
+      const parsed = JSON.parse(raw);
+      const fallbackMeta = defaultMeta(dateText);
+      state.meta = {
+        ...fallbackMeta,
+        ...parsed.meta,
+        recordDate: parsed.meta?.recordDate || dateText,
+        rowCount: Number(parsed.meta?.rowCount) || DEFAULT_ROWS,
+        timeSlots: normalizeTimeSlots(parsed.meta?.timeSlots)
+      };
+      state.rows = Array.isArray(parsed.rows) ? parsed.rows : [];
+      ensureRows(state.meta.rowCount);
+      ensureCellsForTimes();
+      renderAll();
+    }
+
+    function renderHead() {
+      els.tableHeadRow.innerHTML = "";
+
+      const nameHead = document.createElement("th");
+      nameHead.className = "col-name";
+      nameHead.textContent = state.meta.residentLabel || "利用者名";
+      els.tableHeadRow.appendChild(nameHead);
+
+      state.meta.timeSlots.forEach((slot) => {
+        const th = document.createElement("th");
+        th.className = "col-time";
+        th.textContent = slot;
+        els.tableHeadRow.appendChild(th);
+      });
+
+      const noteHead = document.createElement("th");
+      noteHead.className = "col-note";
+      noteHead.textContent = state.meta.noteLabel || "備考";
+      els.tableHeadRow.appendChild(noteHead);
+    }
+
+    function setButtonState(button, value) {
+      button.dataset.state = String(value);
+      button.className = `state-btn state-${value}`;
+      button.textContent = value === 0 ? "" : String(value);
+      button.setAttribute("aria-label", value === 0 ? "未入力" : `状態 ${value}`);
+    }
+
+    function renderBody() {
+      els.sheetBody.innerHTML = "";
+
+      state.rows.forEach((row, rowIndex) => {
+        const tr = document.createElement("tr");
+
+        const nameTd = document.createElement("td");
+        const nameInput = document.createElement("input");
+        nameInput.className = "name-input";
+        nameInput.type = "text";
+        nameInput.placeholder = `${state.meta.residentLabel || "利用者名"}${rowIndex + 1}`;
+        nameInput.value = row.name;
+
+        // ★ IME変換中フラグ（ひらがな途中入力を防止）
+        let isComposing = false;
+        nameInput.addEventListener('compositionstart', () => { isComposing = true; });
+        nameInput.addEventListener('compositionend', (event) => {
+          isComposing = false;
+          state.rows[rowIndex].name = event.target.value;
+          saveState();
+          clearTimeout(nameInput._saveTimer);
+          nameInput._saveTimer = setTimeout(function() {
+            saveConfigToGAS();
+            initNamesToSheet();
+          }, 1500);
+        });
+
+        nameInput.addEventListener("input", (event) => {
+          state.rows[rowIndex].name = event.target.value;
+          saveState();
+          if (!isComposing) {
+            // 変換中でない時のみGASに送信
+            clearTimeout(nameInput._saveTimer);
+            nameInput._saveTimer = setTimeout(function() {
+              saveConfigToGAS();
+              initNamesToSheet();
+            }, 1500);
+          }
+        });
+        nameTd.appendChild(nameInput);
+        tr.appendChild(nameTd);
+
+        row.cells.forEach((cell, cellIndex) => {
+          const td = document.createElement("td");
+          const button = document.createElement("button");
+          button.type = "button";
+          setButtonState(button, cell);
+          button.addEventListener("click", () => {
+            const name = state.rows[rowIndex].name || `利用者${rowIndex+1}`;
+            const time = (state.meta.timeSlots || [])[cellIndex] || '';
+            showStateModal(name, time, function(selectedValue) {
+              state.rows[rowIndex].cells[cellIndex] = selectedValue;
+              setButtonState(button, selectedValue);
+              renderSummary();
+              saveState();
+              if (selectedValue > 0) {
+                // 排泄記録をGASに送信
+                sendToGAS(rowIndex, cellIndex, selectedValue);
+              } else {
+                // ★ 消去：GASの該当セルを空白に
+                clearCellOnGAS(rowIndex, cellIndex);
+              }
+            });
+          });
+          td.appendChild(button);
+          tr.appendChild(td);
+        });
+
+        const noteTd = document.createElement("td");
+        const noteInput = document.createElement("input");
+        noteInput.className = "note-input";
+        noteInput.type = "text";
+        noteInput.placeholder = state.meta.noteLabel || "備考";
+        noteInput.value = row.note;
+        noteInput.addEventListener("input", (event) => {
+          state.rows[rowIndex].note = event.target.value;
+          saveState();
+        });
+        noteTd.appendChild(noteInput);
+        tr.appendChild(noteTd);
+
+        els.sheetBody.appendChild(tr);
+      });
+    }
+
+    function renderMeta() {
+      els.recordDate.value = state.meta.recordDate;
+      els.shiftName.value = state.meta.shiftName;
+      els.staffName.value = state.meta.staffName;
+      els.unitName.value = state.meta.unitName;
+      els.sheetName.value = state.meta.sheetName;
+      els.residentLabel.value = state.meta.residentLabel;
+      els.noteLabel.value = state.meta.noteLabel;
+      els.timeSlots.value = state.meta.timeSlots.join(",");
+      els.handoverNote.value = state.meta.handoverNote;
+      els.legend1.value = state.meta.legend1;
+      els.legend2.value = state.meta.legend2;
+      els.legend3.value = state.meta.legend3;
+      els.legend4.value = state.meta.legend4;
+      els.legend5.value = state.meta.legend5;
+      if(els.legend6) els.legend6.value = state.meta.legend6 || '';
+      if(els.legend7) els.legend7.value = state.meta.legend7 || '';
+      els.rowCount.value = String(state.meta.rowCount);
+
+      els.sheetHeading.textContent = state.meta.sheetName || "排泄チェックシート";
+      els.sheetTitle.textContent = `記録日: ${state.meta.recordDate || "--"}`;
+      els.sheetSubtitle.textContent = `部署: ${state.meta.unitName || "--"} / 記録者: ${state.meta.staffName || "--"} / 勤務帯: ${state.meta.shiftName || "--"}`;
+
+      const printName = document.getElementById("print-sheet-name");
+      const printMeta = document.getElementById("print-sheet-meta");
+      if (printName) printName.textContent = state.meta.sheetName || "チェックシート";
+      if (printMeta) printMeta.textContent = `記録日: ${state.meta.recordDate || "--"} / 部署: ${state.meta.unitName || "--"} / 記録者: ${state.meta.staffName || "--"} / 勤務帯: ${state.meta.shiftName || "--"}`;
+    }
+
+    function renderSummary() {
+      let count1 = 0, count2 = 0, count3 = 0, count4 = 0, count5 = 0, count6 = 0, count7 = 0;
+
+      state.rows.forEach((row) => {
+        row.cells.forEach((cell) => {
+          if (cell === 1) count1++;
+          if (cell === 2) count2++;
+          if (cell === 3) count3++;
+          if (cell === 4) count4++;
+          if (cell === 5) count5++;
+          if (cell === 6) count6++;
+          if (cell === 7) count7++;
+        });
+      });
+
+      els.countState1.textContent = `${count1}件`;
+      els.countState2.textContent = `${count2}件`;
+      els.countState3.textContent = `${count3}件`;
+      els.countState4.textContent = `${count4}件`;
+      els.countState5.textContent = `${count5}件`;
+      els.countState6.textContent = `${count6}件`;
+      els.countState7.textContent = `${count7}件`;
+      els.summaryLabel1.textContent = state.meta.legend1 || "排尿";
+      els.summaryLabel2.textContent = state.meta.legend2 || "排便";
+      els.summaryLabel3.textContent = state.meta.legend3 || "紙おむつ排尿交換";
+      els.summaryLabel4.textContent = state.meta.legend4 || "紙おむつ排便交換";
+      els.summaryLabel5.textContent = state.meta.legend5 || "洗体・更衣";
+      els.summaryLabel6.textContent = state.meta.legend6 || "洗体のみ";
+      els.summaryLabel7.textContent = state.meta.legend7 || "更衣のみ";
+    }
+
+    function renderAll() {
+      renderMeta();
+      renderHead();
+      renderBody();
+      renderSummary();
+    }
+
+    function syncMetaField(field, value) {
+      state.meta[field] = value;
+      renderMeta();
+      renderSummary();
+      saveState();
+      saveConfigToGAS();
+    }
+
+    function updateTimeSlots(value) {
+      state.meta.timeSlots = normalizeTimeSlots(value);
+      ensureCellsForTimes();
+      renderAll();
+      saveState();
+    }
+
+    function applyPreset(preset) {
+      if (preset === "day") {
+        state.meta.shiftName = "日中";
+        state.meta.timeSlots = ["9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00"];
+      }
+      if (preset === "night") {
+        state.meta.shiftName = "夜勤";
+        state.meta.timeSlots = ["18:00", "20:00", "22:00", "0:00", "2:00", "4:00", "6:00"];
+      }
+      if (preset === "short") {
+        state.meta.shiftName = "巡回";
+        state.meta.timeSlots = ["9:00", "12:00", "15:00", "18:00"];
+      }
+      ensureCellsForTimes();
+      renderAll();
+      saveState();
+    }
+
+    function exportState() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const safeDate = state.meta.recordDate || todayString();
+      link.href = url;
+      link.download = `checksheet-${safeDate}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function importState(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const parsed = JSON.parse(reader.result);
+        const dateText = parsed.meta?.recordDate || todayString();
+        state.meta = {
+          ...defaultMeta(dateText),
+          ...parsed.meta,
+          recordDate: dateText,
+          rowCount: Number(parsed.meta?.rowCount) || DEFAULT_ROWS,
+          timeSlots: normalizeTimeSlots(parsed.meta?.timeSlots)
+        };
+        state.rows = Array.isArray(parsed.rows) ? parsed.rows : [];
+        ensureRows(state.meta.rowCount);
+        ensureCellsForTimes();
+        renderAll();
+        saveState();
+      };
+      reader.readAsText(file, "utf-8");
+    }
+
+    els.recordDate.addEventListener("change", (event) => {
+      loadStateByDate(event.target.value || todayString());
+    });
+
+    els.shiftName.addEventListener("change", (event) => syncMetaField("shiftName", event.target.value));
+    els.staffName.addEventListener("input", (event) => syncMetaField("staffName", event.target.value));
+    els.unitName.addEventListener("input", (event) => syncMetaField("unitName", event.target.value));
+    els.sheetName.addEventListener("input", (event) => syncMetaField("sheetName", event.target.value));
+    els.residentLabel.addEventListener("input", (event) => {
+      state.meta.residentLabel = event.target.value;
+      renderAll();
+      saveState();
+    });
+    els.noteLabel.addEventListener("input", (event) => {
+      state.meta.noteLabel = event.target.value;
+      renderAll();
+      saveState();
+    });
+    els.timeSlots.addEventListener("change", (event) => updateTimeSlots(event.target.value));
+    els.handoverNote.addEventListener("input", (event) => syncMetaField("handoverNote", event.target.value));
+    els.legend1.addEventListener("input", (event) => syncMetaField("legend1", event.target.value));
+    els.legend2.addEventListener("input", (event) => syncMetaField("legend2", event.target.value));
+    els.legend3.addEventListener("input", (event) => syncMetaField("legend3", event.target.value));
+    els.legend4.addEventListener("input", (event) => syncMetaField("legend4", event.target.value));
+    els.legend5.addEventListener("input", (event) => syncMetaField("legend5", event.target.value));
+    els.rowCount.addEventListener("change", (event) => {
+      ensureRows(Number(event.target.value));
+      ensureCellsForTimes();
+      renderAll();
+      saveState();
+      saveConfigToGAS(); // ★ 行数変更を即座にGASに送信
+    });
+
+    els.presetDay.addEventListener("click", () => applyPreset("day"));
+    els.presetNight.addEventListener("click", () => applyPreset("night"));
+    els.presetShort.addEventListener("click", () => applyPreset("short"));
+
+    els.printButton.addEventListener("click", () => window.print());
+
+    els.pdfButton.addEventListener("click", () => {
+      const originalTitle = document.title;
+      const sheetName = state.meta.sheetName || "チェックシート";
+      const date = state.meta.recordDate || todayString();
+      document.title = `${sheetName}_${date}`;
+      window.print();
+      document.title = originalTitle;
+    });
+
+    function buildTeamsText() {
+      const m = state.meta;
+      const legendMap = {
+        1: m.legend1 || "排尿",
+        2: m.legend2 || "排便",
+        3: m.legend3 || "両方",
+        0: "なし"
+      };
+      const iconMap = { 1: "🔵", 2: "🟡", 3: "🟢", 0: "⬜" };
+      const sheetName = m.sheetName || "チェックシート";
+      const lines = [];
+      lines.push(`━━━━━━━━━━━━━━━━━━━━`);
+      lines.push(`📋 ${sheetName}`);
+      lines.push(`📅 ${m.recordDate || "--"}　⏰ ${m.shiftName || "--"}`);
+      lines.push(`👤 記録者: ${m.staffName || "--"}　🏢 ${m.unitName || "--"}`);
+      lines.push(`━━━━━━━━━━━━━━━━━━━━`);
+
+      const slots = m.timeSlots;
+      let hasAnyRecord = false;
+
+      state.rows.forEach((row) => {
+        if (!row.name && row.cells.every(c => c === 0)) return;
+        hasAnyRecord = true;
+        const name = row.name || "（未入力）";
+        lines.push("");
+        lines.push(`👤 ${name}`);
+        lines.push(`${"─".repeat(16)}`);
+        slots.forEach((slot, i) => {
+          const val = row.cells[i] ?? 0;
+          lines.push(`  ${slot.padEnd(6)}${iconMap[val]} ${legendMap[val]}`);
+        });
+        if (row.note) lines.push(`  📝 ${row.note}`);
+      });
+
+      if (!hasAnyRecord) {
+        lines.push("");
+        lines.push("（記録なし）");
+      }
+
+      lines.push("");
+      lines.push(`━━━━━━━━━━━━━━━━━━━━`);
+      lines.push(`凡例　🔵${m.legend1 || "排尿"}　🟡${m.legend2 || "排便"}　🟢${m.legend3 || "両方"}　⬜なし`);
+
+      if (m.handoverNote) {
+        lines.push("");
+        lines.push(`📋 引き継ぎメモ`);
+        lines.push(m.handoverNote);
+      }
+
+      return lines.join("\n");
+    }
+
+    els.teamsButton.addEventListener("click", () => {
+      const text = buildTeamsText();
+      navigator.clipboard.writeText(text).then(() => {
+        els.teamsToast.style.display = "block";
+        setTimeout(() => { els.teamsToast.style.display = "none"; }, 4000);
+      }).catch(() => {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        els.teamsToast.style.display = "block";
+        setTimeout(() => { els.teamsToast.style.display = "none"; }, 4000);
+      });
+    });
+
+    els.exportButton.addEventListener("click", exportState);
+    els.importButton.addEventListener("click", () => els.importFile.click());
+    els.importFile.addEventListener("change", (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      importState(file);
+      event.target.value = "";
+    });
+
+    els.resetButton.addEventListener("click", () => {
+      const ok = window.confirm("この日の記録を初期化します。\nスプレッドシートの当日データも削除されます。\nよろしいですか？");
+      if (!ok) return;
+      localStorage.removeItem(recordStorageKey(state.meta.recordDate));
+      state.rows = [];
+      ensureRows(state.meta.rowCount);
+      ensureCellsForTimes();
+      renderAll();
+      saveState();
+      const meta = state.meta;
+      const params = new URLSearchParams({
+        action: 'saveConfig',
+        date: meta.recordDate || '',
+        kinmu: meta.shiftName || '',
+        staffName: meta.staffName || '',
+        unitName: meta.unitName || '',
+        sheetName: meta.sheetName || '',
+        legend1: (meta.legends && meta.legends[0]) || '',
+        legend2: (meta.legends && meta.legends[1]) || '',
+        legend3: (meta.legends && meta.legends[2]) || '',
+        timeSlots: (meta.timeSlots || []).join(','),
+        names: ''
+      });
+      fetch(GAS_URL + '?' + params.toString(), { mode: 'no-cors' });
+      const clearParams = new URLSearchParams({
+        action: 'clearToday',
+        date: meta.recordDate || '',
+        kinmu: meta.shiftName || '日中'
+      });
+      fetch(GAS_URL + '?' + clearParams.toString(), { mode: 'no-cors' });
+      updateSaveStatus('初期化しました');
+    });
+
+    // 常に今日の日付でスタート
+    const today = todayString();
+    state.meta = defaultMeta(today);
+    const raw = localStorage.getItem(recordStorageKey(today));
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      state.meta = {
+        ...defaultMeta(today),
+        ...parsed.meta,
+        recordDate: today
+      };
+      state.meta.timeSlots = normalizeTimeSlots(state.meta.timeSlots);
+      state.rows = Array.isArray(parsed.rows) ? parsed.rows.map(function(r) {
+        return { name: r.name, cells: r.cells ? r.cells.map(function(){ return 0; }) : [] };
+      }) : [];
+    }
+    ensureRows(state.meta.rowCount || 6);
+    ensureCellsForTimes();
+    renderAll();
+    saveState();
+
+    // ===== 排泄選択モーダル =====
+    let modalCallback = null;
+
+    function showStateModal(name, time, callback) {
+      modalCallback = callback;
+      document.getElementById('modalTitle').textContent = name + '　' + time;
+
+      // ★ モーダルのボタン表示を凡例に完全連動
+      document.getElementById('modalBtn1').textContent = state.meta.legend1 || '排尿';
+      document.getElementById('modalBtn2').textContent = state.meta.legend2 || '排便';
+      document.getElementById('modalBtn3').textContent = state.meta.legend3 || '紙おむつ排尿交換';
+      document.getElementById('modalBtn4').textContent = state.meta.legend4 || '紙おむつ排便交換';
+      document.getElementById('modalBtn5').textContent = state.meta.legend5 || '洗体・更衣';
+      document.getElementById('modalBtn6').textContent = state.meta.legend6 || '洗体のみ';
+      document.getElementById('modalBtn7').textContent = state.meta.legend7 || '更衣のみ';
+
+      document.getElementById('stateModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('stateModal').classList.remove('show');
+      modalCallback = null;
+    }
+
+    document.getElementById('modalBtn1').addEventListener('click', function() {
+      if (modalCallback) modalCallback(1);
+      closeModal();
+    });
+    document.getElementById('modalBtn2').addEventListener('click', function() {
+      if (modalCallback) modalCallback(2);
+      closeModal();
+    });
+    document.getElementById('modalBtn3').addEventListener('click', function() {
+      if (modalCallback) modalCallback(3);
+      closeModal();
+    });
+
+    // ★ 追加：消去ボタン
+    document.getElementById('modalBtnClear').addEventListener('click', function() {
+      if (modalCallback) modalCallback(0);
+      closeModal();
+    });
+
+    document.getElementById('modalBtn4').addEventListener('click', function() {
+      if (modalCallback) modalCallback(4);
+      closeModal();
+    });
+    document.getElementById('modalBtn5').addEventListener('click', function() {
+      if (modalCallback) modalCallback(5);
+      closeModal();
+    });
+    document.getElementById('modalBtn6').addEventListener('click', function() {
+      if (modalCallback) modalCallback(6);
+      closeModal();
+    });
+    document.getElementById('modalBtn7').addEventListener('click', function() {
+      if (modalCallback) modalCallback(7);
+      closeModal();
+    });
+
+    document.getElementById('modalCancel').addEventListener('click', closeModal);
+    document.getElementById('stateModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // ===== GAS連携 =====
+
+    async function sendToGAS(rowIndex, cellIndex, value) {
+      try {
+        const name = state.rows[rowIndex].name || '';
+        if (!name) return;
+        const timeSlots = state.meta.timeSlots || [];
+        const time = timeSlots[cellIndex] || String(cellIndex);
+        // ★ 凡例の設定値をそのままスプレッドシートに送信（汎用対応）
+        const legendMap = {
+          1: state.meta.legend1 || '排尿',
+          2: state.meta.legend2 || '排便',
+          3: state.meta.legend3 || '両方',
+          4: state.meta.legend4 || '紙おむつ交換',
+          5: state.meta.legend5 || '洗体・更衣'
+        };
+        const stateText = legendMap[value] || String(value);
+        const date = state.meta.recordDate || '';
+        const kinmu = state.meta.shiftName || '';
+        const recorder = state.meta.staffName || '';
+
+        const params = new URLSearchParams({
+          action: 'save', date, kinmu, recorder,
+          name, time, stateText, note: ''
+        });
+        fetch(GAS_URL + '?' + params.toString(), { mode: 'no-cors' });
+        console.log('GAS送信:', name, time, stateText);
+      } catch(e) {
+        console.log('GAS送信エラー:', e);
+      }
+    }
+
+    // ★ 追加：消去をGASに送信（該当セルの排泄状態を空白に）
+    async function clearCellOnGAS(rowIndex, cellIndex) {
+      try {
+        const name = state.rows[rowIndex].name || '';
+        if (!name) return;
+        const time = (state.meta.timeSlots || [])[cellIndex] || String(cellIndex);
+        const date = state.meta.recordDate || '';
+        const kinmu = state.meta.shiftName || '';
+
+        const params = new URLSearchParams({
+          action: 'clearCell',
+          date, kinmu, name, time
+        });
+        fetch(GAS_URL + '?' + params.toString(), { mode: 'no-cors' });
+        console.log('GAS消去:', name, time);
+      } catch(e) {
+        console.log('GAS消去エラー:', e);
+      }
+    }
+
+    async function saveConfigToGAS() {
+      try {
+        const names = state.rows.map(r => r.name || '').join(',');
+        const params = new URLSearchParams({
+          action: 'saveConfig',
+          date: state.meta.recordDate || '',
+          kinmu: state.meta.shiftName || '',
+          staffName: state.meta.staffName || '',
+          unitName: state.meta.unitName || '',
+          sheetName: state.meta.sheetName || '',
+          legend1: state.meta.legend1 || '',
+          legend2: state.meta.legend2 || '',
+          legend3: state.meta.legend3 || '',
+          legend4: state.meta.legend4 || '',
+          legend5: state.meta.legend5 || '',
+          timeSlots: (state.meta.timeSlots || []).join(','),
+          rowCount: String(state.meta.rowCount || 6),
+          names: names
+        });
+        fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString()
+        });
+        console.log('設定をGASに保存しました');
+      } catch(e) {
+        console.log('設定保存エラー:', e);
+      }
+    }
+
+    async function initNamesToSheet() {
+      try {
+        const names = state.rows.map(r => r.name || '').filter(n => n.length >= 1 && /^[ぁ-んァ-ン一-龥々]+$/.test(n)).join(',');
+        if (!names) return;
+        const params = new URLSearchParams({
+          action: 'initNames',
+          date: state.meta.recordDate || '',
+          kinmu: state.meta.shiftName || '日中',
+          staffName: state.meta.staffName || '',
+          names: names
+        });
+        fetch(GAS_URL + '?' + params.toString(), { mode: 'no-cors' });
+        console.log('利用者名をスプレッドシートに書き込みました:', names);
+      } catch(e) {
+        console.log('利用者名書き込みエラー:', e);
+      }
+    }
+
+    async function loadConfigFromGAS() {
+      try {
+        const res = await fetch(GAS_URL + '?action=loadConfig');
+        const json = await res.json();
+        if (json.status === 'success' && json.config && Object.keys(json.config).length > 0) {
+          const c = json.config;
+          let updated = false;
+          if (c.date) {
+            var rawDate = c.date;
+            var normalizedDate = rawDate;
+            if (rawDate.indexOf('GMT') !== -1 || rawDate.indexOf('Jan') !== -1 || rawDate.indexOf('May') !== -1 || rawDate.indexOf('Apr') !== -1) {
+              var d = new Date(rawDate);
+              if (!isNaN(d.getTime())) {
+                normalizedDate = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+              }
+            }
+            var todayStr = todayString();
+            if (normalizedDate >= todayStr && normalizedDate !== state.meta.recordDate) {
+              state.meta.recordDate = normalizedDate; updated = true;
+            }
+          }
+          if (c.kinmu && c.kinmu !== state.meta.shiftName) { state.meta.shiftName = c.kinmu; updated = true; }
+          if (c.staffName && !state.meta.staffName) { state.meta.staffName = c.staffName; updated = true; }
+          if (c.unitName && !state.meta.unitName) { state.meta.unitName = c.unitName; updated = true; }
+          if (c.sheetName && !state.meta.sheetName) { state.meta.sheetName = c.sheetName; updated = true; }
+          if (c.legend1) { state.meta.legend1 = c.legend1; updated = true; }
+          if (c.legend2) { state.meta.legend2 = c.legend2; updated = true; }
+          if (c.legend3) { state.meta.legend3 = c.legend3; updated = true; }
+          if (c.legend4) { state.meta.legend4 = c.legend4; updated = true; }
+          if (c.legend5) { state.meta.legend5 = c.legend5; updated = true; }
+          // ★ 行数をGASから読み込んで反映
+          if (c.rowCount) {
+            const newRowCount = Number(c.rowCount);
+            if (newRowCount > 0 && newRowCount !== state.meta.rowCount) {
+              state.meta.rowCount = newRowCount;
+              ensureRows(newRowCount);
+              updated = true;
+            }
+          }
+          if (c.timeSlots) {
+            const slots = c.timeSlots.split(',').map(s => s.trim()).filter(Boolean);
+            if (slots.length > 0 && slots.join(',') !== state.meta.timeSlots.join(',')) {
+              state.meta.timeSlots = slots;
+              updated = true;
+            }
+          }
+          if (c.names) {
+            const names = c.names.split(',');
+            names.forEach(function(name, i) {
+              if (i < state.rows.length && name && name.trim() && !state.rows[i].name) {
+                state.rows[i].name = name.trim();
+                updated = true;
+              }
+            });
+          }
+          if (updated) {
+            ensureCellsForTimes();
+            renderAll();
+            saveState();
+            updateSaveStatus('リーダーの設定を反映しました (' + new Date().toLocaleTimeString('ja-JP', {hour:'2-digit',minute:'2-digit'}) + ')');
+          }
+        }
+      } catch(e) {
+        console.log('設定読み込みエラー:', e);
+      }
+    }
+
+    async function autoRefresh() {
+      try {
+        await loadConfigFromGAS();
+        const date = state.meta.recordDate || '';
+        const kinmu = state.meta.shiftName || '';
+        if (!date) return;
+
+        const params = new URLSearchParams({
+          action: 'loadData', date, kinmu
+        });
+        const res = await fetch(GAS_URL + '?' + params.toString());
+        const json = await res.json();
+
+        if (json.status === 'success' && json.data && json.data.length > 0) {
+          let updated = false;
+          json.data.forEach(function(record) {
+            const name = record.name || '';
+            const time = record.time || '';
+            const stateText = record.stateText || '';
+            const rowIdx = state.rows.findIndex(r => r.name === name);
+            if (rowIdx < 0) return;
+            const timeIdx = (state.meta.timeSlots || []).indexOf(time);
+            if (timeIdx < 0) return;
+            // ★ 凡例の設定値からstateValを逆引き（汎用対応）
+            const legendReverse = {};
+            [1,2,3,4,5].forEach(function(i) {
+              const key = state.meta['legend' + i];
+              if (key) legendReverse[key] = i;
+            });
+            const stateVal = legendReverse[stateText] !== undefined ? legendReverse[stateText] : 0;
+            // ★ 消去（空白）も反映する
+            if (state.rows[rowIdx].cells[timeIdx] !== stateVal) {
+              state.rows[rowIdx].cells[timeIdx] = stateVal;
+              updated = true;
+            }
+          });
+          if (updated) {
+            renderBody();
+            renderSummary();
+            updateSaveStatus('他スタッフの入力を反映しました (' + new Date().toLocaleTimeString('ja-JP', {hour:'2-digit',minute:'2-digit'}) + ')');
+          }
+        }
+      } catch(e) {
+        console.log('自動更新エラー:', e);
+      }
+    }
+
+    setInterval(autoRefresh, 10000);
+    setTimeout(autoRefresh, 1000);
+
+    // ★ スマホで開いた時にチェックシート部分へ自動スクロール
+    setTimeout(function() {
+      const tableSection = document.querySelector('.table-shell');
+      if (tableSection) {
+        tableSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 800);
+
+    window.autoRefresh = autoRefresh;
+    window.sendToGAS = sendToGAS;
+    window.saveConfigToGAS = saveConfigToGAS;
+    window.clearCellOnGAS = clearCellOnGAS;
+
+  </script>
+
+</body></html>
